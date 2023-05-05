@@ -11,7 +11,9 @@ func Routes() {
 	route.Use(cors.Default())
 
 	route.POST("/login", controllers.Login)
+	route.GET("/pedidos", controllers.Pedidos)
 	route.GET("/domicilios", controllers.Domicilios)
+	route.GET("/domiciliarios", controllers.Domiciliarios)
 
 	route.Run()
 }

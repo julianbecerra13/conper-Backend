@@ -13,9 +13,9 @@ type PedidosRequest struct {
 	IDPunto   string `json:"direccionOrden"`
 }
 
-func Domicilios(c *gin.Context) {
+func Pedidos(c *gin.Context) {
 	var pedidosRequest PedidosRequest
-	var pedidosResponse []models.Domicilios
+	var pedidosResponse []models.Pedidos
 
 	// Capturar los parametros de la url
 	pedidosRequest.IDCliente = c.Query("idCliente")
@@ -28,6 +28,6 @@ func Domicilios(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"ordenes" : pedidosResponse})
+	c.JSON(http.StatusOK, gin.H{"ordenes": pedidosResponse})
 
 }
