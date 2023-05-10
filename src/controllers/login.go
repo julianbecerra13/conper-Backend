@@ -39,6 +39,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuario o contraseña incorrectos"})
 		return
 	}
+	fmt.Println("Usuario:", usuario.Username, "Contraseña:", usuario.Password)
 
 	// retorna la respuesta
 	c.JSON(http.StatusOK, usuarioResponse)
