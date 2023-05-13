@@ -7,11 +7,10 @@ import (
 )
 
 type ActualizadorRequest struct {
-	IdPunto        string `json:"idPunto"`
-	IdPedido       string `json:"idPedido"`
-	IdUsuario      string `json:"idUsuario"`
-	IdTraza        string `json:"idTraza"`
-	IdDomiciliario string `json:"idDomiciliario"`
+	IdPunto        int    `json:"idPunto"`
+	IdPedido       int    `json:"idPedido"`
+	IdTraza        int `json:"idTraza"`
+	IdDomiciliario int    `json:"idDomiciliario"`
 }
 
 func Actualizar(c *gin.Context) {
@@ -22,7 +21,7 @@ func Actualizar(c *gin.Context) {
 		return
 	}
 
-	result := db.Exec("CALL spcp_sil_creatraza_motorizado(?, ?, ?, ?, ?, ?, ?)", actualizadorRequest.IdPunto, actualizadorRequest.IdPedido, actualizadorRequest.IdUsuario, "1", actualizadorRequest.IdTraza, "", actualizadorRequest.IdDomiciliario)
+	result := db.Exec("CALL spcp_sil_creatraza_motorizado(?, ?, ?, ?, ?, ?, ?)", actualizadorRequest.IdPunto, actualizadorRequest.IdPedido, "1", "1", actualizadorRequest.IdTraza, "", actualizadorRequest.IdDomiciliario)
 
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})

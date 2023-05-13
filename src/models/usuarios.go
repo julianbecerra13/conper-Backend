@@ -1,16 +1,16 @@
 package models
 
 type Usuario struct {
-	Nombre         string `json:"nombre"`
-	Usuario        string `json:"usuario"`
-	Celular        string `json:"celular"`
-	Identificacion string `json:"identificacion"`
-	TipoInicio     string `json:"tipoInicio"`
-	IDPais         int    `json:"idPais"`
-	IDCiudad       int    `json:"idCiudad"`
-	IDPunto        int    `json:"idPunto"`
-	IDPerfil       int    `json:"idperfil"`
-	Lat            string `json:"lat"`
-	Login          string `json:"Login"`
-	IDUsuario      int    `json:"idUsuario"`
+	Nombre         string `gorm:"column:nombre"`
+	Usuario        string `gorm:"column:usuario"`
+	Celular        string `gorm:"column:celular"`
+	Identificacion string `gorm:"column:identificacion"`
+	TipoInicio     string `gorm:"column:tipoInicio"`
+	IDPais         int    `gorm:"column:idPais"`
+	IDCiudad       int    `gorm:"column:idCiudad"`
+	IDPunto        int    `gorm:"column:idPunto"`
+	IDPerfil       int    `gorm:"column:idperfil"`
+	Lat            string `gorm:"column:lat"`
+	Login          string `gorm:"column:login"`
+	IDUsuario      int    `gorm:"column:idUsuario"`
 }
