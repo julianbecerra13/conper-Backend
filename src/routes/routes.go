@@ -12,6 +12,7 @@ func Routes() {
 
 	route.POST("/login", controllers.Login)
 	route.PUT("/actualizar", controllers.Actualizar)
+	route.PUT("/actualizarT", controllers.ActualizarT)
 	route.GET("/pedidos", controllers.Pedidos)
 	route.GET("/domicilios", controllers.Domicilios)
 	route.GET("/domiciliarios", controllers.Domiciliarios)
