@@ -16,6 +16,9 @@ func Routes() {
 	route.GET("/pedidos", controllers.Pedidos)
 	route.GET("/domicilios", controllers.Domicilios)
 	route.GET("/domiciliarios", controllers.Domiciliarios)
+	route.PUT("/aggdomiciliarios", controllers.AggDomiciliarios)
+	route.PUT("/aggdomiciliariosn2", controllers.AggDomiciliariosn2)
+	route.PUT("/detalles", controllers.Detalles)
 
 	route.Run()
 }
