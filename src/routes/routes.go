@@ -22,6 +22,7 @@ func Routes() {
 	route.PUT("/detalles", controllers.Detalles)
 	route.PUT("/impresora", controllers.Impresora)
 	route.PUT("/aggnovedad1", controllers.AggNovedad)
+	route.PUT("/archivopost", controllers.GenerarArchivoPO1)
 
 
 	route.Run()
