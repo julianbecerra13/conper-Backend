@@ -10,6 +10,7 @@ type ActualizadorTRequest struct {
 	IdPunto        int    `json:"idPunto"`
 	IdPedido       int    `json:"idPedido"`
 	IdTraza        int `json:"idTraza"`
+	Idincidente   int    `json:"idincidente"`
 }
 
 func ActualizarT(c *gin.Context) {
@@ -20,7 +21,7 @@ func ActualizarT(c *gin.Context) {
 		return
 	}
 
-	result := db.Exec("CALL spcp_sil_creatraza(?, ?, ?, ?, ?, ?)", actualizadorTRequest.IdPunto, actualizadorTRequest.IdPedido, "1", "1", actualizadorTRequest.IdTraza, "")
+	result := db.Exec("CALL spcp_sil_creatraza(?, ?, ?, ?, ?, ?)", actualizadorTRequest.IdPunto, actualizadorTRequest.IdPedido, "1", actualizadorTRequest.Idincidente, actualizadorTRequest.IdTraza, "")
 
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
