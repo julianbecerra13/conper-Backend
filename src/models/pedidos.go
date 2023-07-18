@@ -7,4 +7,7 @@ type Pedidos struct {
 	TotalOrden     float64 `gorm:"column:totalOrden"`
 	FechaCrea      string  `gorm:"column:fechaCrea"`
 	NombreTraza    string  `gorm:"column:nombreTraza"`
+	PuntodeVenta   string  `gorm:"column:PuntoVenta"`
+	Observaciones  string  `gorm:"column:observaciones"`
+	Telefono       string  `gorm:"column:telefono"`
 }
