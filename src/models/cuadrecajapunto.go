@@ -1,8 +1,8 @@
 package models
 
 type CuadreCajaPunto struct {
-	IDPunto      string `gorm:"column:idPunto"`
 	NombrePunto  string `gorm:"column:nombrePunto"`
+	NombreTipoPago  string `gorm:"column:nombreTipoPago"`
 	TotalOrdenes int    `gorm:"column:TotalOrdenes"`
-	TotalVenta   int    `gorm:"column:TotalVenta"`
+	TotalVenta   float64    `gorm:"column:TotalVenta"`
 }
