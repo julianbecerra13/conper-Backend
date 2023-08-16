@@ -9,7 +9,7 @@ type Usuario struct {
 	IDPais         int    `gorm:"column:idPais"`
 	IDCiudad       int    `gorm:"column:idCiudad"`
 	IDPunto        int    `gorm:"column:idPunto"`
-	IDPerfil       int    `gorm:"column:idperfil"`
+	IDPerfil       int    `gorm:"column:idPerfil"`
 	Lat            string `gorm:"column:lat"`
 	Login          string `gorm:"column:login"`
 	IDUsuario      int    `gorm:"column:idUsuario"`
