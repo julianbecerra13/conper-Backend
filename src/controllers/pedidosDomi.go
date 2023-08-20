@@ -60,7 +60,7 @@ func PedidosDomi(c *gin.Context) {
 	// Ejecutar la consulta directamente
 	query := `SELECT idOrdenGeneral,nombreCliente,telefonoCelular,direccion,CONCAT('$ ', FORMAT(totalOrden, 0)) AS totalOrden,fechaCrea
 	FROM tcpr_ordengeneral
-	WHERE date(fechaCrea) = '2023-08-04' AND idTipoVenta = 2 AND idEstadoOrden = 2 AND idPunto=? AND idDomiciliario=? LIMIT 0,100`
+	WHERE date(fechaCrea) = curdate() AND idTipoVenta = 2 AND idEstadoOrden = 2 AND idPunto=? AND idDomiciliario=? LIMIT 0,100`
 
 	result := db.Raw(query, pedidosDomiRequest.IdPunto, pedidosDomiRequest.IdDomiciliario).Scan(&pedidosDomiResponse)
 	if result.Error != nil {

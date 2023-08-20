@@ -29,6 +29,7 @@ func Routes() {
 	route.GET("/cuadrecajapunto", controllers.CuadreCajaPunto)
 	route.GET("/PedidosDomi", controllers.PedidosDomi)
 	route.PUT("/transferir", controllers.Transferir)
+	route.GET("/reportepedidos", controllers.ReportePedidos)
 	
 
 
