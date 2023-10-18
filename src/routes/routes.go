@@ -36,8 +36,12 @@ func Routes() {
 	route.GET("/cantidadMovil", controllers.ObtenerNumeroMovil)
 	route.GET("/datosgraficobarra", controllers.ObtenerReporteMensual)
 	route.GET("/reporteinfo", controllers.Reportesinfo)
-	route.POST("/procesar", controllers.Inforeportes)
+	route.POST("/procesar", controllers.HandleDatos)
 	route.GET("/puntos", controllers.Puntos)
+	route.GET("/diarioventas", controllers.Diario)
+	route.GET("/mensualventas", controllers.Mensuales)
+	route.GET("/anualventas", controllers.Anual)
+	route.POST("/parametrosreportes", controllers.ParametrosReportes)
 
 
 	route.Run()

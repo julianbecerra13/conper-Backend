@@ -5,6 +5,6 @@ type Reportesinfo struct {
 	Nombre string `gorm:"column:nombre"`
 	Descripcion string `gorm:"column:descripcion"`
 	Call string `gorm:"column:nameQueryProcedureSQL"`
-	Parametros string `gorm:"column:parametros"`
+	Parametros int `gorm:"column:parametros"`
 
 }

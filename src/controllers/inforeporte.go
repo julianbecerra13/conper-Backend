@@ -1,90 +1,100 @@
 package controllers
 
 import (
+	"database/sql"
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/myperri/copner/src/config"
 )
 
-type ReportRequest struct {
-	Cadena string `json:"Cadena"`
-	Param1 string `json:"Param1"`
-	Param2 string `json:"Param2"`
-	Param3 string `json:"Param3"`
-	Param4 string `json:"Param4"`
-	Param5 string `json:"Param5"`
+type RequestData struct {
+	FromData map[string]interface{} `json:"fromData"`
+	Call     string               `json:"Call"`
 }
 
-func Inforeportes(c *gin.Context) {
-	var reportRequest ReportRequest
-	
-	// Decodifica el JSON del cuerpo de la solicitud en la estructura ReportRequest
-	if err := c.ShouldBindJSON(&reportRequest); err != nil {
+func HandleDatos(c *gin.Context) {
+	var requestData RequestData
+
+	if err := c.ShouldBindJSON(&requestData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Obtiene la conexión a la base de datos utilizando ConnectDB() de config.go
-	db := config.ConnectDB()
+	fmt.Printf("Ejecutando procedimiento almacenado: CALL %s\n", requestData.Call)
+	fmt.Printf("Parámetros: %v\n", requestData.FromData)
 
-	// Importante: No cierres manualmente la conexión aquí, GORM lo manejará automáticamente
+	var rows *sql.Rows
+	var err error
 
-	// Construye el procedimiento almacenado con los parámetros adecuados
-	procedureCall := "CALL " + reportRequest.Cadena + "(?, ?, ?, ?, ?)"
+	// Verifica si FromData contiene valores
+	if len(requestData.FromData) > 0 {
+		// Si hay valores en FromData, crea una consulta con parámetros
+		query := "CALL " + requestData.Call + "("
+		params := []interface{}{}
+		for _, value := range requestData.FromData {
+			query += "?, "
+			params = append(params, value)
+		}
+		query = query[:len(query)-2] + ")"
 
-	// Ejecuta el procedimiento almacenado con los parámetros proporcionados
-	rows, err := db.Raw(procedureCall, reportRequest.Param1, reportRequest.Param2, reportRequest.Param3, reportRequest.Param4, reportRequest.Param5).Rows()
+		rows, err = db.Raw(query, params...).Rows()
+	} else {
+		// Si no hay valores en FromData, ejecuta el procedimiento almacenado sin parámetros
+		rows, err = db.Raw("CALL " + requestData.Call).Rows()
+	}
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	defer rows.Close()
 
-	// Construye una matriz de interfaz para almacenar los resultados
-	results := make([]map[string]interface{}, 0)
-
-	// Obtiene las columnas de los resultados
+	// Convierte los resultados en un mapa
+	result := make(map[string]interface{})
 	columns, err := rows.Columns()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Crea una matriz para almacenar los valores escaneados de cada fila
-	values := make([]interface{}, len(columns))
-	valuePtrs := make([]interface{}, len(columns))
-
-	// Inicializa los valuePtrs con las direcciones de los valores correspondientes en values
-	for i := range values {
-		valuePtrs[i] = &values[i]
-	}
-
-	// Recorre las filas
+	data := [][]interface{}{} // Almacena los datos de filas
 	for rows.Next() {
-		// Escanea los valores en values
-		if err := rows.Scan(valuePtrs...); err != nil {
+		values := make([]interface{}, len(columns))
+		for i := range columns {
+			values[i] = new(interface{})
+		}
+
+		if err := rows.Scan(values...); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// Crea un mapa para almacenar los valores de esta fila
-		rowData := make(map[string]interface{})
-
-		// Recorre los valores escaneados y los convierte al tipo adecuado
+		row := make(map[string]interface{})
 		for i, col := range columns {
-			val := values[i]
-			if val == nil {
-				rowData[col] = nil
-			} else {
-				rowData[col] = string(val.([]byte))
-			}
+			val := *(values[i].(*interface{}))
+			row[col] = val
 		}
 
-		// Agrega el mapa de esta fila a los resultados
-		results = append(results, rowData)
+		// Agrega esta fila al resultado
+		data = append(data, values)
 	}
 
-	// Convierte los resultados a formato JSON y responde con ellos
-	c.JSON(http.StatusOK, gin.H{"data": results})
+	if len(data) > 0 {
+		result["columns"] = columns
+		result["data"] = data
+	} else {
+		// Si no hay datos, establece un mensaje personalizado
+		result["message"] = "Sin datos"
+	}
+
+	// Convierte el resultado en JSON y devuelve la respuesta
+	responseJSON, err := json.Marshal(result)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, string(responseJSON))
 }
