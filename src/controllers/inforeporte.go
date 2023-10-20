@@ -113,7 +113,10 @@ func HandleDatos(c *gin.Context) {
 	// Formatea los datos en el formato deseado
 	formattedData := [][]interface{}{}
 	for _, row := range data {
-		formattedRow := []interface{}{row["idPunto"], row["nombre"]}
+		formattedRow := []interface{}{}
+		for _, col := range columns {
+			formattedRow = append(formattedRow, row[col])
+		}
 		formattedData = append(formattedData, formattedRow)
 	}
 
