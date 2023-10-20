@@ -11,7 +11,7 @@ import (
 
 type RequestData struct {
 	FromData map[string]interface{} `json:"fromData"`
-	Call     string               `json:"Call"`
+	Call     string                 `json:"Call"`
 }
 
 func HandleDatos(c *gin.Context) {
@@ -59,11 +59,31 @@ func HandleDatos(c *gin.Context) {
 		return
 	}
 
-	data := [][]interface{}{} // Almacena los datos de filas
+	fmt.Printf("Columnas: %v\n", columns) // Punto de impresión
+
+	data := []map[string]interface{}{} // Almacena los datos de filas
+
+	// Get the column types
+	columnTypes, err := rows.ColumnTypes()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	for rows.Next() {
 		values := make([]interface{}, len(columns))
+		scanArgs := make([]interface{}, len(columns))
+
 		for i := range columns {
-			values[i] = new(interface{})
+			// Use the column types to determine the appropriate scan type
+			switch columnTypes[i].DatabaseTypeName() {
+			case "INT", "TINYINT", "SMALLINT", "MEDIUMINT", "BIGINT":
+				scanArgs[i] = new(int64)
+			default:
+				scanArgs[i] = new(string)
+			}
+
+			values[i] = scanArgs[i]
 		}
 
 		if err := rows.Scan(values...); err != nil {
@@ -71,19 +91,37 @@ func HandleDatos(c *gin.Context) {
 			return
 		}
 
+		fmt.Printf("Valores escaneados: %v\n", values) // Punto de impresión
+
 		row := make(map[string]interface{})
 		for i, col := range columns {
-			val := *(values[i].(*interface{}))
-			row[col] = val
+			// Cast the scanned values to the appropriate data types
+			switch columnTypes[i].DatabaseTypeName() {
+			case "INT", "TINYINT", "SMALLINT", "MEDIUMINT", "BIGINT":
+				row[col] = *(scanArgs[i].(*int64))
+			default:
+				row[col] = *(scanArgs[i].(*string))
+			}
 		}
 
+		fmt.Printf("Fila escaneada: %v\n", row) // Punto de impresión
+
 		// Agrega esta fila al resultado
-		data = append(data, values)
+		data = append(data, row)
 	}
 
-	if len(data) > 0 {
+	// Formatea los datos en el formato deseado
+	formattedData := [][]interface{}{}
+	for _, row := range data {
+		formattedRow := []interface{}{row["idPunto"], row["nombre"]}
+		formattedData = append(formattedData, formattedRow)
+	}
+
+	fmt.Printf("Datos finales: %v\n", formattedData) // Punto de impresión
+
+	if len(formattedData) > 0 {
 		result["columns"] = columns
-		result["data"] = data
+		result["data"] = formattedData
 	} else {
 		// Si no hay datos, establece un mensaje personalizado
 		result["message"] = "Sin datos"
