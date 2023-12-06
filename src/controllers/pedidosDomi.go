@@ -58,7 +58,7 @@ func PedidosDomi(c *gin.Context) {
 	}
 
 	// Ejecutar la consulta directamente
-	query := `SELECT idOrdenGeneral,nombreCliente,telefonoCelular,direccion,CONCAT('$ ', FORMAT(totalOrden, 0)) AS totalOrden,fechaCrea
+	query := `SELECT idOrdenGeneral,idOrdenNumero,nombreCliente,telefonoCelular,direccion,CONCAT('$ ', FORMAT(totalOrden, 0)) AS totalOrden,fechaCrea
 	FROM tcpr_ordengeneral
 	WHERE date(fechaCrea) = curdate() AND idTipoVenta = 2 AND idEstadoOrden = 2 AND idPunto=? AND idDomiciliario=? LIMIT 0,100`
 
@@ -69,4 +69,5 @@ func PedidosDomi(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"pedidos": pedidosDomiResponse})
+	print(pedidosDomiResponse)
 }

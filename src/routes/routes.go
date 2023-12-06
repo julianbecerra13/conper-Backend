@@ -4,11 +4,21 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/myperri/copner/src/controllers"
+	"time"
 )
 
 func Routes() {
 	route := gin.Default()
-	route.Use(cors.Default())
+
+    config := cors.DefaultConfig()
+    config.AllowAllOrigins = true
+    config.AllowMethods = []string{"GET", "POST", "PUT", "OPTIONS"}
+    config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type"}
+    config.ExposeHeaders = []string{"Content-Length"}
+    config.AllowCredentials = true
+    config.MaxAge = 12 * time.Hour
+
+    route.Use(cors.New(config))
 
 	route.POST("/login", controllers.Login)
 	route.PUT("/actualizar", controllers.Actualizar)
